@@ -6,13 +6,22 @@ export type UserDocument = User & Document;
 @Schema()
 export class User {
   @Prop()
-  name: string;
+  firstname: string;
 
   @Prop()
-  age: number;
+  lastname: string;
 
   @Prop()
-  breed: string;
+  middlename: string;
+
+  @Prop()
+  username: string;
+
+  @Prop()
+  birthdate: Date;
+
+  @Prop()
+  password: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

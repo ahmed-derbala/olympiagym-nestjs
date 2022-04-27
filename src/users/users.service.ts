@@ -4,12 +4,20 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './user.schema';
 import { Model } from 'mongoose';
+import { ConfigService } from '@nestjs/config';
+
+const bcrypt = require('bcrypt');
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel('User') private userModel: Model<UserDocument>) {}
+  constructor(@InjectModel('User')
+  private userModel: Model<UserDocument>,
+    private configService: ConfigService,
+  ) { }
 
-  create(createUserDto: CreateUserDto) {
+  create(createUserDto: CreateUserDto) {    
+    const hashedPassword = bcrypt.hashSync(createUserDto.password, this.configService.get('users.saltRounds'));
+    createUserDto.password=hashedPassword
     const createdUser = new this.userModel(createUserDto);
     return createdUser.save();
   }
@@ -18,8 +26,9 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(id: string) {
+    //  return `This action returns a #${id} user`;
+    return this.userModel.findOne({ username: id }).lean()
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

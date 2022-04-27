@@ -4,13 +4,16 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 import mainMongoDBConfig from './config/main-mongo-db.config';
 import appConfig from './config/app.config';
+import usersConfig from './config/users.config';
+import authConfig from './config/auth.config';
 
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [mainMongoDBConfig,appConfig] }),
+    ConfigModule.forRoot({ isGlobal: true, load: [mainMongoDBConfig,appConfig,usersConfig,authConfig] }),
     UsersModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -22,6 +25,7 @@ import appConfig from './config/app.config';
       }),
       inject: [ConfigService],
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

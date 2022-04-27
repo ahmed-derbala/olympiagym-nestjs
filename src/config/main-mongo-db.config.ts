@@ -1,4 +1,3 @@
-
 let user = null
 const password = null
 const host = process.env.DATABASE_HOST || 'localhost'
