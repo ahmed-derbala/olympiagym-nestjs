@@ -16,19 +16,18 @@ export class UsersService {
   ) { }
 
   create(createUserDto: CreateUserDto) {    
-    const hashedPassword = bcrypt.hashSync(createUserDto.password, this.configService.get('users.saltRounds'));
+    const hashedPassword = bcrypt.hashSync(createUserDto.password, this.configService.get('auth.saltRounds'));
     createUserDto.password=hashedPassword
     const createdUser = new this.userModel(createUserDto);
-    return createdUser.save();
+    return createdUser.save().catch(err=>err)
   }
 
   findAll() {
     return `This action returns all users`;
   }
 
-  findOne(id: string) {
-    //  return `This action returns a #${id} user`;
-    return this.userModel.findOne({ username: id }).lean()
+  findOne(params: any) {    
+    return this.userModel.findOne(params.query).select(params.select).lean()
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
