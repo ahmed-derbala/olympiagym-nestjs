@@ -3,6 +3,8 @@ import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { ConfigService } from '@nestjs/config';
 
 const bcrypt = require('bcrypt');
 
@@ -10,16 +12,15 @@ const bcrypt = require('bcrypt');
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
   ) { }
 
   async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOne({query:{username},select:'+password _id username'});
+    const user = await this.usersService.findOne({ filter: { username }, select: '+password _id username profile' });
 
     if (user && bcrypt.compareSync(pass, user.password)) {
       const { password, ...result } = user;
-      console.log(result,'result');
-      
+      //console.log(result, 'result');
       return result;
     }
     return null;
@@ -28,12 +29,12 @@ export class AuthService {
   async login(user: any) {
     const payload = { user, sub: user.userId };
     return {
-      token: this.jwtService.sign(payload),user
+      token: this.jwtService.sign(payload), user
     };
   }
 
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  register(createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
   }
 
   findAll() {

@@ -27,7 +27,7 @@ export class UsersService {
   }
 
   findOne(params: any) {    
-    return this.userModel.findOne(params.query).select(params.select).lean()
+    return this.userModel.findOne(params.filter).select(params.select).lean()
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
